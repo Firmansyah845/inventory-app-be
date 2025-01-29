@@ -1,0 +1,49 @@
+# Options for analysis running.
+run:
+  # See the dedicated "run" documentation section.
+  tests: false
+  modules-download-mode: readonly
+  allow-parallel-runners: true
+  allow-serial-runners: true
+  timeout: 5m
+# output configuration options
+output:
+  formats:
+    - format: html
+      path: report.html
+    - format: colored-line-number
+# All available settings of specific linters.
+linters-settings:
+
+linters:
+  # Disable all linters.
+  # Default: false
+  disable-all: true
+  # Enable specific linter
+  # https://golangci-lint.run/usage/linters/#enabled-by-default
+  enable:
+    - errcheck
+    - gosimple
+    - gosec
+    - govet
+    - ineffassign
+    - staticcheck
+    - unused
+
+  # Enable all available linters.
+  # Default: false
+  enable-all: false
+
+  # Enable presets.
+  # https://golangci-lint.run/usage/linters
+  # Default: []
+  presets: []
+  # Enable only fast linters from enabled linters set (first run won't be fast)
+  # Default: false
+
+issues:
+  # See the dedicated "issues" documentation section.
+  option: value
+severity:
+  # See the dedicated "severity" documentation section.
+  option: value

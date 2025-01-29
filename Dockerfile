@@ -25,6 +25,6 @@ COPY --from=builder /app/configs/application.sample.yaml ./configs/application.y
 RUN chmod +x ads-api-service
 USER 1001
 
-ENTRYPOINT ["./jaya-api-service ", "server"]
+ENTRYPOINT ["./warehouse-api-service ", "server"]
 
 HEALTHCHECK --interval=5s --timeout=3s --start-period=3s --retries=3 CMD curl --fail http://localhost:3002/ping

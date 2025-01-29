@@ -4,7 +4,7 @@ import (
 	"context"
 )
 
-func NewService(warehouseRepository WarehouseRepository) JayaService {
+func NewService(warehouseRepository WarehouseRepository) WarehouseService {
 	return &service{warehouseRepository: warehouseRepository}
 }
 
@@ -26,7 +26,7 @@ func (s *service) StockReport(ctx context.Context) (*[]Stock, error) {
 
 }
 
-type JayaService interface {
+type WarehouseService interface {
 	IncomingGoods(ctx context.Context, req IncomingData) error
 	OutgoingGoods(ctx context.Context, req OutgoingData) error
 	StockReport(ctx context.Context) (*[]Stock, error)

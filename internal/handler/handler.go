@@ -10,7 +10,7 @@ import (
 
 type Handler struct {
 	healthCheckService health_checks.Service
-	warehouseService   warehouse.JayaService
+	warehouseService   warehouse.WarehouseService
 }
 
 func NewHandler(mysqlDb *sql.DB) *Handler {

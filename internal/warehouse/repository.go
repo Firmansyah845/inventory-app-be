@@ -3,6 +3,7 @@ package warehouse
 import (
 	"context"
 	"database/sql"
+	logger "github.com/sirupsen/logrus"
 )
 
 func NewDBStore(db *sql.DB) WarehouseRepository {
@@ -17,6 +18,7 @@ func (r *warehouseRepo) IncomingGoods(ctx context.Context, incomingData Incoming
 	// Begin transaction
 	tx, err := r.db.Begin()
 	if err != nil {
+		logger.Error(err)
 		return err
 	}
 
@@ -26,6 +28,7 @@ func (r *warehouseRepo) IncomingGoods(ctx context.Context, incomingData Incoming
 	          VALUES (?, ?, ?, ?, ?)`
 	res, err := tx.ExecContext(ctx, query, incomingData.TrxInNo, incomingData.WhsIdf, incomingData.TrxInDate, incomingData.TrxInSuppIdf, incomingData.TrxInNotes)
 	if err != nil {
+		logger.Error(err)
 		tx.Rollback()
 		return err
 	}
@@ -33,6 +36,7 @@ func (r *warehouseRepo) IncomingGoods(ctx context.Context, incomingData Incoming
 	// Get the last inserted ID
 	trxInPK, err = res.LastInsertId()
 	if err != nil {
+		logger.Error(err)
 		tx.Rollback()
 		return err
 	}
@@ -43,6 +47,7 @@ func (r *warehouseRepo) IncomingGoods(ctx context.Context, incomingData Incoming
 		         VALUES (?, ?, ?, ?)`
 		_, err := tx.ExecContext(ctx, query, trxInPK, product.ProductId, product.QtyDus, product.QtyPcs)
 		if err != nil {
+			logger.Error(err)
 			tx.Rollback()
 			return err
 		}
@@ -60,6 +65,7 @@ func (r *warehouseRepo) OutgoingGoods(ctx context.Context, outgoingData Outgoing
 	// Begin transaction
 	tx, err := r.db.Begin()
 	if err != nil {
+		logger.Error(err)
 		return err
 	}
 
@@ -69,6 +75,7 @@ func (r *warehouseRepo) OutgoingGoods(ctx context.Context, outgoingData Outgoing
 	          VALUES (?, ?, ?, ?, ?)`
 	res, err := tx.ExecContext(ctx, query, outgoingData.TrxOutNo, outgoingData.WhsIdf, outgoingData.TrxOutDate, outgoingData.TrxOutSuppIdf, outgoingData.TrxOutNotes)
 	if err != nil {
+		logger.Error(err)
 		tx.Rollback()
 		return err
 	}
@@ -81,6 +88,7 @@ func (r *warehouseRepo) OutgoingGoods(ctx context.Context, outgoingData Outgoing
 		         VALUES (?, ?, ?, ?)`
 		_, err := tx.ExecContext(ctx, query, trxOutPK, product.ProductId, product.QtyDus, product.QtyPcs)
 		if err != nil {
+			logger.Error(err)
 			tx.Rollback()
 			return err
 		}
@@ -88,6 +96,7 @@ func (r *warehouseRepo) OutgoingGoods(ctx context.Context, outgoingData Outgoing
 
 	// Commit transaction
 	if err := tx.Commit(); err != nil {
+		logger.Error(err)
 		return err
 	}
 
@@ -108,6 +117,7 @@ func (r *warehouseRepo) StockReport(ctx context.Context) (*[]Stock, error) {
 
 	rows, err := r.db.QueryContext(ctx, query)
 	if err != nil {
+		logger.Error(err)
 		return nil, err
 	}
 	defer rows.Close()
@@ -115,6 +125,7 @@ func (r *warehouseRepo) StockReport(ctx context.Context) (*[]Stock, error) {
 	for rows.Next() {
 		var item Stock
 		if err := rows.Scan(&item.WhsName, &item.ProductName, &item.QtyDus, &item.QtyPcs); err != nil {
+			logger.Error(err)
 			return nil, err
 		}
 		result = append(result, item)

@@ -1,31 +1,34 @@
 package config
 
 import (
-	"log"
-	"os"
-	"strings"
-
+	"fmt"
 	"github.com/spf13/viper"
+	"os"
 )
 
 func Init() {
-	viper.SetConfigFile(".env")
-	viper.AddConfigPath(".")
+
+	if os.Getenv("ENVIRONMRNT") == "test" {
+		viper.SetConfigName("test")
+	} else {
+		viper.SetConfigName("application")
+	}
+
+	viper.SetConfigType("yaml")
+	viper.AddConfigPath("./configs")
+	viper.AddConfigPath("./../../configs")
+	viper.AddConfigPath("./../../../configs")
+	viper.AddConfigPath("./../../../../configs")
+
 	err := viper.ReadInConfig()
 	if err != nil {
-		log.Println("Error reading .env file. Try to get from environment instead.")
-		for _, e := range os.Environ() {
-			split := strings.Split(e, "=")
-			k := split[0]
-			_ = viper.BindEnv(k)
-		}
-		viper.AutomaticEnv()
+		panic(fmt.Errorf("fatal error config file: %w", err))
 	}
+
+	viper.AutomaticEnv()
 
 	initLogConfig()
 	initAppConfig()
 	initServerConfig()
 	initDatabaseConfig()
-	//initDatabaseAppierConfig()
-	//initCacheConfig()
 }
